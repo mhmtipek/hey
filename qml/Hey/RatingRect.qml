@@ -12,6 +12,13 @@ Rectangle {
 
     color: "transparent"
 
+    function fixText(val) {
+        if (val == -1)
+            return "-";
+        else
+            return "" + val;
+    }
+
     Label {
         id: likesCountLabel
 
@@ -19,9 +26,9 @@ Rectangle {
         horizontalAlignment: Text.AlignLeft
         verticalAlignment: Text.AlignVCenter
 
-        text: "" + likesCount;
+        text: fixText(likesCount);
         font.pixelSize: 22
-        color: "green"
+        color: likesCount == -1 ? "darkgray" : "green"
     }
 
     Label {
@@ -31,9 +38,9 @@ Rectangle {
         horizontalAlignment: Text.AlignRight
         verticalAlignment: Text.AlignVCenter
 
-        text: "" + dislikesCount;
+        text: fixText(dislikesCount);
         font.pixelSize: 22
-        color: "red"
+        color: dislikesCount == -1 ? "darkgray" : "red"
     }
 
     Rectangle {
@@ -52,7 +59,7 @@ Rectangle {
             anchors.top: parent.top
             anchors.bottom: parent.bottom
 
-            color: "green"
+            color: likesCount == -1 || dislikesCount == -1 ? "darkgray" : "green"
         }
 
         Rectangle {
@@ -62,7 +69,7 @@ Rectangle {
             anchors.right: parent.right
             height: parent.height
 
-            color: "red"
+            color: likesCount == -1 || dislikesCount == -1 ? "darkgray" : "red"
         }
     }
 }

@@ -80,6 +80,7 @@ Page {
                         error();
                     }
                 }
+                console.log("Ready State: " + doc.readyState);
             }
 
             started();
@@ -139,7 +140,9 @@ Page {
             }
         }
 
-        var viewCount = ytData.yt$statistics.viewCount;
+        var viewCount = -1;
+        if (ytData.hasOwnProperty("yt$statistics"))
+            viewCount = ytData.yt$statistics.viewCount;
 
         var description = ytData.media$group.media$description.$t;
 
@@ -147,8 +150,13 @@ Page {
         if (ytData.hasOwnProperty("gd$rating"))
             rating = ytData.gd$rating.average;
 
-        var likeCount = ytData.yt$rating.numLikes;
-        var dislikeCount = ytData.yt$rating.numDislikes;
+        var likeCount = -1;
+        var dislikeCount = -1;
+
+        if (ytData.hasOwnProperty("yt$rating")) {
+            likeCount = ytData.yt$rating.numLikes;
+            dislikeCount = ytData.yt$rating.numDislikes;
+        }
 
         console.log("likes:" + likeCount + ", dislikes:" + dislikeCount);
 

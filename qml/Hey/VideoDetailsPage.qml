@@ -1,6 +1,7 @@
 // import QtQuick 1.0 // to target S60 5th Edition or Maemo 5
 import QtQuick 1.1
 import com.nokia.meego 1.0
+import org.mhmtipek.hey 1.0
 
 Page {
     id: videoDetailsPage
@@ -24,8 +25,11 @@ Page {
 
         titleLabel.text = videoData.title;
         authorLabel.text = videoData.author;
-        viewCountLabel.text = "Viewed " + videoData.viewCount + " times";
+        viewCountLabel.text = videoData.viewCount == -1 ? "No view count information"
+                                                        : "Viewed " + videoData.viewCount + " times";
+
         descriptionLabel.text = videoData.description;
+
         ratingRect.likesCount = videoData.likeCount;
         ratingRect.dislikesCount = videoData.dislikeCount;
     }
@@ -119,11 +123,8 @@ Page {
                 onClicked: {
                     openingVideoAnimation.start();
 
-
                     if (!Qt.openUrlExternally(videoData.url))
                         Console.log("openexternally failed");
-
-//                    openingVideoAnimation.stop();
                 }
             }
         }
@@ -199,6 +200,15 @@ Page {
 
                 font.pixelSize: 20
                 color: "#6A6A6A"
+            }
+        }
+    }
+
+    WindowActions {
+        onFocusChanged: {
+            if (!hasFocus) {
+                openingVideoAnimation.stop();
+                clickToPlayImage.opacity = 0.48;
             }
         }
     }
