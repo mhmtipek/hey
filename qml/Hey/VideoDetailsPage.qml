@@ -17,6 +17,8 @@ Page {
         }
     }
 
+    orientationLock: PageOrientation.LockPortrait
+
     onVideoDataChanged: {
         clearAll();
 
@@ -58,148 +60,159 @@ Page {
     }
 
     Flickable {
+        id: videoDetailsFlickable
+
         anchors.left: parent.left
         anchors.right: parent.right
         anchors.top: header.bottom
         anchors.bottom: parent.bottom
 
-        contentWidth: width
-        contentHeight: thumbnail.height + detailsViewArea.height
+        contentWidth: allContent.width
+        contentHeight: allContent.height
 
         clip: true
 
-        ThumbnailImage {
-            id: thumbnail
-
-            height: (width / 4.0) * 3.0
-
-            anchors.top: parent.top
-            anchors.left: parent.left
-            anchors.right: parent.right
-            anchors.margins: 10
-
-            durationTextFontPixelSize: 26
-
-            onLoaded: clickToPlayImage.visible = true
-
-            Image {
-                id: clickToPlayImage
-                visible: false
-
-                anchors.centerIn: parent
-                source: "image://theme/icon-l-common-video-playback"
-
-                opacity: 0.48
-            }
-
-            SequentialAnimation {
-                id: openingVideoAnimation
-
-                running: false
-                loops: Animation.Infinite
-
-                NumberAnimation {
-                    target: clickToPlayImage;
-                    property: "opacity";
-                    duration: 600;
-                    easing.type: Easing.InOutQuad
-                    from: 0.48
-                    to: 0
-                }
-
-                NumberAnimation {
-                    target: clickToPlayImage;
-                    property: "opacity";
-                    duration: 600;
-                    easing.type: Easing.InOutQuad
-                    from: 0
-                    to: 0.48
-                }
-            }
-
-
-            MouseArea {
-                anchors.fill: parent
-                onClicked: {
-                    openingVideoAnimation.start();
-
-                    if (!Qt.openUrlExternally(videoData.url))
-                        Console.log("openexternally failed");
-                }
-            }
-        }
-
         Item {
-            id: detailsViewArea
+            id: allContent
+            width: videoDetailsFlickable.width
+            height: thumbnail.height + detailsViewArea.height
 
-            anchors.top: thumbnail.bottom
-            anchors.left: parent.left
-            anchors.right: parent.right
-            anchors.bottom: parent.bottom
-            anchors.leftMargin: 10
-            anchors.rightMargin: 10
+            ThumbnailImage {
+                id: thumbnail
 
-            Label {
-                id: titleLabel
+                width: parent.width
+                height: (width / 4.0) * 3.0
 
                 anchors.top: parent.top
-                anchors.left: parent.left
-                anchors.right: parent.right
 
-                font.pixelSize: 26
+                durationTextFontPixelSize: 26
+
+                onLoaded: clickToPlayImage.visible = true
+
+                Image {
+                    id: clickToPlayImage
+                    visible: false
+
+                    anchors.centerIn: parent
+                    source: "image://theme/icon-l-common-video-playback"
+
+                    opacity: 0.48
+                }
+
+                SequentialAnimation {
+                    id: openingVideoAnimation
+
+                    running: false
+                    loops: Animation.Infinite
+
+                    NumberAnimation {
+                        target: clickToPlayImage;
+                        property: "opacity";
+                        duration: 600;
+                        easing.type: Easing.InOutQuad
+                        from: 0.48
+                        to: 0
+                    }
+
+                    NumberAnimation {
+                        target: clickToPlayImage;
+                        property: "opacity";
+                        duration: 600;
+                        easing.type: Easing.InOutQuad
+                        from: 0
+                        to: 0.48
+                    }
+                }
+
+
+                MouseArea {
+                    anchors.fill: parent
+                    onClicked: {
+                        openingVideoAnimation.start();
+
+                        if (!Qt.openUrlExternally(videoData.url))
+                            Console.log("openexternally failed");
+                    }
+                }
             }
 
-            Label {
-                id: authorLabel
+            Item {
+                id: detailsViewArea
 
-                anchors.top: titleLabel.bottom
+                anchors.top: thumbnail.bottom
                 anchors.left: parent.left
                 anchors.right: parent.right
+                anchors.leftMargin: 10
+                anchors.rightMargin: 10
 
-                verticalAlignment: Text.AlignVCenter
-                horizontalAlignment: Text.AlignLeft
+                height: titleLabel.height
+                        + authorLabel.paintedHeight
+                        + viewCountLabel.paintedHeight
+                        + ratingRect.height
+                        + descriptionLabel.paintedHeight
 
-                font.pixelSize: 20
-                font.italic: true
+                Label {
+                    id: titleLabel
 
-                color: "#7C7C7C"
-            }
+                    anchors.top: parent.top
+                    anchors.left: parent.left
+                    anchors.right: parent.right
 
-            Label {
-                id: viewCountLabel
+                    font.pixelSize: 26
+                }
 
-                anchors.top: authorLabel.bottom
-                anchors.left: parent.left
-                anchors.right: parent.right
+                Label {
+                    id: authorLabel
 
-                verticalAlignment: Text.AlignVCenter
-                horizontalAlignment: Text.AlignLeft
+                    anchors.top: titleLabel.bottom
+                    anchors.left: parent.left
+                    anchors.right: parent.right
 
-                font.pixelSize: 22
-                color: "#363636"
-            }
+                    verticalAlignment: Text.AlignVCenter
+                    horizontalAlignment: Text.AlignLeft
 
-            RatingRect {
-                id: ratingRect
+                    font.pixelSize: 20
+                    font.italic: true
 
-                anchors.left: parent.left
-                anchors.right: parent.right
-                anchors.top: viewCountLabel.bottom
-            }
+                    color: "#7C7C7C"
+                }
 
-            Label {
-                id: descriptionLabel
+                Label {
+                    id: viewCountLabel
 
-                anchors.top: ratingRect.bottom
-                anchors.topMargin: 10
-                anchors.left: parent.left
-                anchors.right: parent.right
+                    anchors.top: authorLabel.bottom
+                    anchors.left: parent.left
+                    anchors.right: parent.right
 
-                verticalAlignment: Text.AlignTop
-                horizontalAlignment: Text.AlignLeft
+                    verticalAlignment: Text.AlignVCenter
+                    horizontalAlignment: Text.AlignLeft
 
-                font.pixelSize: 20
-                color: "#6A6A6A"
+                    font.pixelSize: 22
+                    color: "#363636"
+                }
+
+                RatingRect {
+                    id: ratingRect
+
+                    anchors.left: parent.left
+                    anchors.right: parent.right
+                    anchors.top: viewCountLabel.bottom
+                }
+
+                Label {
+                    id: descriptionLabel
+
+                    anchors.top: ratingRect.bottom
+                    anchors.topMargin: 10
+                    anchors.left: parent.left
+                    anchors.right: parent.right
+
+                    verticalAlignment: Text.AlignTop
+                    horizontalAlignment: Text.AlignLeft
+
+                    font.pixelSize: 20
+                    color: "#6A6A6A"
+                }
             }
         }
     }

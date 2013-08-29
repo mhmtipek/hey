@@ -53,10 +53,6 @@ PageStackWindow {
             MenuItem {
                 text: qsTr("About")
             }
-            MenuItem {
-                text: qsTr("Quit")
-                onClicked: Qt.quit();
-            }
         }
     }
 }

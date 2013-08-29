@@ -20,6 +20,15 @@ Page {
     property variant currentVideoData: ({})
 
     onResultsChanged: {
+        if (results.length == 0) {
+            errorText.visible = true;
+            resultListView.visible = false;
+        } else {
+            errorText.visible = false;
+            resultListView.visible = true;
+            header.title = "Search Results [1 - " + results.length + "]";
+        }
+
         resultListView.model.clear();
 
         for (var i in results)
@@ -29,6 +38,26 @@ Page {
     HeaderRect {
         id: header
         title: "Search Results"
+    }
+
+    Label {
+        id: errorText
+
+        anchors.top: header.bottom
+        anchors.left: parent.left
+        anchors.right: parent.right
+        anchors.bottom: parent.bottom
+        anchors.topMargin: 100
+
+        font.pixelSize: 60
+        font.bold: false
+
+        color: "#b5b5b5"
+
+        horizontalAlignment: Text.AlignHCenter
+        verticalAlignment: Text.AlignVCenter
+
+        text: "No results"
     }
 
     ListView {

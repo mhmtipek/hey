@@ -36,7 +36,10 @@ Page {
 
     TextField {
         id: searchTextField
+
         text: ""
+        placeholderText: "Search"
+
         anchors.left: parent.left
         anchors.right: parent.right
         anchors.top: header.bottom
@@ -48,15 +51,6 @@ Page {
         validator: RegExpValidator {
             regExp: /.+/i
         }
-
-//        onFocusChanged: {
-//            console.log("Focussss");
-//            if (focus == true) {
-//                emptyText.visible = false;
-//            } else {
-//                emptyText.visible = (text.length == 0);
-//            }
-//        }
 
         onAccepted: {
             if (searchTextField.text.length == 0)
@@ -90,16 +84,6 @@ Page {
             doc.open("GET", url);
             doc.send();
         }
-
-//        Label {
-//            id: emptyText
-//            anchors.fill: parent
-//            anchors.leftMargin: 20
-//            horizontalAlignment: Text.AlignLeft
-//            verticalAlignment: Text.AlignVCenter
-//            color: "#b5b5b5"
-//            text: "Search"
-//        }
     }
 
     Label {
@@ -157,8 +141,6 @@ Page {
             likeCount = ytData.yt$rating.numLikes;
             dislikeCount = ytData.yt$rating.numDislikes;
         }
-
-        console.log("likes:" + likeCount + ", dislikes:" + dislikeCount);
 
         return {
             "id": id,
