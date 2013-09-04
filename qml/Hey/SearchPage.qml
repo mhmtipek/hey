@@ -107,7 +107,11 @@ Page {
                         searchPage.searchResults = resultList;
                         finished();
                     } else {
-                        errorString = "Error. Http code: " + doc.status;
+                        if (doc.status == 0)
+                            errorstring = "No internet connection";
+                        else
+                            errorstring = "Http code: " + doc.status;
+
                         error();
                     }
                 }
