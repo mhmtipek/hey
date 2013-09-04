@@ -19,6 +19,7 @@ PageStackWindow {
         id: searchResultPage
 
         onBackRequested: {
+            searchPage.clear();
             pageStack.replace(searchPage);
         }
 
@@ -33,6 +34,14 @@ PageStackWindow {
 
         onBackRequested: {
             pageStack.replace(searchResultPage);
+        }
+    }
+
+    AboutPage {
+        id: aboutPage
+
+        onBackRequested: {
+            pageStack.replace(searchPage);
         }
     }
 
@@ -52,6 +61,10 @@ PageStackWindow {
         MenuLayout {
             MenuItem {
                 text: qsTr("About")
+
+                onClicked: {
+                    pageStack.replace(aboutPage);
+                }
             }
         }
     }

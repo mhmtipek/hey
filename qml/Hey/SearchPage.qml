@@ -29,6 +29,10 @@ Page {
         statusText.text = "Error: " + errorstring;
     }
 
+    function clear() {
+        statusText.text = "Enter search input";
+    }
+
     HeaderRect {
         id: header
         title: "Search Videos"
@@ -50,6 +54,23 @@ Page {
 
         validator: RegExpValidator {
             regExp: /.+/i
+        }
+
+        Image {
+            id: searchImage
+
+            anchors.right: parent.right
+            anchors.top: parent.top
+            anchors.bottom: parent.bottom
+
+            source: "image://theme/icon-m-common-search";
+
+            smooth: true
+
+            MouseArea {
+                anchors.fill: parent
+                onClicked: searchTextField.accepted();
+            }
         }
 
         onAccepted: {
@@ -124,6 +145,13 @@ Page {
             }
         }
 
+        var ytUrl = "";
+        for (var linkIndex in ytData.link) {
+            if (ytData.link[linkIndex].type == "text/html") {
+                ytUrl = ytData.link[linkIndex].href;
+            }
+        }
+
         var viewCount = -1;
         if (ytData.hasOwnProperty("yt$statistics"))
             viewCount = ytData.yt$statistics.viewCount;
@@ -154,7 +182,8 @@ Page {
             "description": description,
             "rating": rating,
             "likeCount": likeCount,
-            "dislikeCount": dislikeCount
+            "dislikeCount": dislikeCount,
+            "ytUrl": ytUrl
         };
     }
 }

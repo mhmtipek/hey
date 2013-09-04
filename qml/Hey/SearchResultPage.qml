@@ -92,7 +92,8 @@ Page {
                 "viewCount": viewCount,
                 "rating": rating,
                 "likeCount": likeCount,
-                "dislikeCount": dislikeCount
+                "dislikeCount": dislikeCount,
+                "ytUrl": ytUrl
             };
 
             Component.onCompleted: {

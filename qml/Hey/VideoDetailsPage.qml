@@ -10,10 +10,51 @@ Page {
 
     signal backRequested
 
+    TextInput {
+        id: clipboardCopyHelperTextInput
+        visible: false
+        text: ""
+
+        function copyToSystemClipboard(textToCopy) {
+            text = textToCopy;
+            selectAll();
+            copy();
+        }
+    }
+
+    Menu {
+        id: optionsMenu
+        visualParent: pageStack
+        MenuLayout {
+            MenuItem {
+                id: actionOpenInBrowser
+                text: qsTr("Open In Browser")
+
+                onClicked: {
+                    Qt.openUrlExternally(videoData.ytUrl);
+                }
+            }
+
+            MenuItem {
+                id: actionCopyLink
+                text: qsTr("Copy Link");
+
+                onClicked: {
+                    clipboardCopyHelperTextInput.copyToSystemClipboard(videoData.ytUrl);
+                }
+            }
+        }
+    }
+
     tools: ToolBarLayout {
         ToolIcon {
             iconId: "toolbar-back"
             onClicked: videoDetailsPage.backRequested();
+        }
+
+        ToolIcon {
+            platformIconId: "toolbar-view-menu"
+            onClicked: (optionsMenu.status === DialogStatus.Closed) ? optionsMenu.open() : optionsMenu.close()
         }
     }
 
@@ -34,6 +75,9 @@ Page {
 
         ratingRect.likesCount = videoData.likeCount;
         ratingRect.dislikesCount = videoData.dislikeCount;
+
+        actionOpenInBrowser.enabled = videoData.ytUrl != "";
+        actionCopyLink.enabled = videoData.ytUrl != "";
     }
 
     function clearAll() {
