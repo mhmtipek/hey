@@ -54,7 +54,7 @@ Page {
 
         font.pixelSize: 28
 
-        text: "Version: 0.0.1"
+        text: "Version: 1.0.0"
     }
 
     Text {
