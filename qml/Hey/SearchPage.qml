@@ -21,7 +21,28 @@ import com.nokia.meego 1.0
 Page {
     id: searchPage
 
-    tools: commonTools
+    tools: ToolBarLayout {
+        id: commonTools
+        visible: true
+
+        ToolIcon {
+            id: backToSearchResultsButton
+            visible: false
+            iconId: "toolbar-list"
+            anchors.left: (parent === undefined) ? undefined : parent.left
+            onClicked: navigateToResultPageRequested();
+
+            onEnabledChanged: {
+                iconId = enabled ? "toolbar-list" : "toolbar-list-dimmed";
+            }
+        }
+
+        ToolIcon {
+            platformIconId: "toolbar-view-menu"
+            anchors.right: (parent === undefined) ? undefined : parent.right
+            onClicked: (myMenu.status === DialogStatus.Closed) ? myMenu.open() : myMenu.close()
+        }
+    }
 
     property variant searchResults: []
     property string errorstring: ""
@@ -32,6 +53,7 @@ Page {
     signal finished
     signal error
     signal progress(int p) /* Range: 0-4 */
+    signal navigateToResultPageRequested
 
     onStarted: {
         statusText.text = "Searching ...";
@@ -39,6 +61,7 @@ Page {
 
     onFinished: {
         statusText.text = "Finished.";
+        backToSearchResultsButton.enabled = true;
     }
 
     onError: {
@@ -47,6 +70,10 @@ Page {
 
     function clear() {
         statusText.text = "Enter search input";
+    }
+
+    function showBackToSearchResultPageButton() {
+        backToSearchResultsButton.visible = true;
     }
 
     HeaderRect {
@@ -92,6 +119,8 @@ Page {
         onAccepted: {
             if (searchTextField.text.length == 0)
                 return;
+
+            backToSearchResultsButton.enabled = false;
 
             var doc = new XMLHttpRequest();
             doc.onreadystatechange = function() {
