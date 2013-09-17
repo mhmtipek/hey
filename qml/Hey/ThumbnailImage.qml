@@ -39,7 +39,7 @@ Rectangle {
                 durationRect.visible = true;
                 loaded();
             } else {
-                thumbnailLoadingProgressLabel.text = "Loading... %" + Math.round(progress * 100);
+                thumbnailLoadingProgressLabel.text = "Loading Thumbnail ...<br>%" + Math.round(progress * 100);
             }
         }
 
@@ -50,7 +50,7 @@ Rectangle {
             verticalAlignment: Text.AlignVCenter
             horizontalAlignment: Text.AlignHCenter
 
-            text: "Loading...";
+            text: "Loading Thumbnail ...";
         }
 
         Rectangle {

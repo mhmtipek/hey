@@ -65,12 +65,15 @@ Page {
     tools: ToolBarLayout {
         ToolIcon {
             iconId: "toolbar-back"
-            onClicked: videoDetailsPage.backRequested();
+            onClicked: {
+                optionsMenu.close();
+                videoDetailsPage.backRequested();
+            }
         }
 
         ToolIcon {
             platformIconId: "toolbar-view-menu"
-            onClicked: (optionsMenu.status === DialogStatus.Closed) ? optionsMenu.open() : optionsMenu.close()
+            onClicked: (optionsMenu.status === DialogStatus.Closed) ? optionsMenu.open() : optionsMenu.close();
         }
     }
 
@@ -119,12 +122,72 @@ Page {
         title: "Video Details"
     }
 
+    ThumbnailImage {
+        id: thumbnail
+
+        width: parent.width
+        height: (width / 4.0) * 3.0
+
+        anchors.top: header.bottom
+        anchors.left: parent.left
+
+        durationTextFontPixelSize: 26
+
+        onLoaded: clickToPlayImage.visible = true
+
+        Image {
+            id: clickToPlayImage
+            visible: false
+
+            anchors.centerIn: parent
+            source: "image://theme/icon-l-common-video-playback"
+
+            opacity: 0.48
+        }
+
+        SequentialAnimation {
+            id: openingVideoAnimation
+
+            running: false
+            loops: Animation.Infinite
+
+            NumberAnimation {
+                target: clickToPlayImage;
+                property: "opacity";
+                duration: 600;
+                easing.type: Easing.InOutQuad
+                from: 0.48
+                to: 0
+            }
+
+            NumberAnimation {
+                target: clickToPlayImage;
+                property: "opacity";
+                duration: 600;
+                easing.type: Easing.InOutQuad
+                from: 0
+                to: 0.48
+            }
+        }
+
+
+        MouseArea {
+            anchors.fill: parent
+            onClicked: {
+                openingVideoAnimation.start();
+
+                if (!Qt.openUrlExternally(videoData.url))
+                    Console.log("openexternally failed");
+            }
+        }
+    }
+
     Flickable {
         id: videoDetailsFlickable
 
         anchors.left: parent.left
         anchors.right: parent.right
-        anchors.top: header.bottom
+        anchors.top: thumbnail.bottom
         anchors.bottom: parent.bottom
 
         contentWidth: allContent.width
@@ -135,71 +198,12 @@ Page {
         Item {
             id: allContent
             width: videoDetailsFlickable.width
-            height: thumbnail.height + detailsViewArea.height
-
-            ThumbnailImage {
-                id: thumbnail
-
-                width: parent.width
-                height: (width / 4.0) * 3.0
-
-                anchors.top: parent.top
-
-                durationTextFontPixelSize: 26
-
-                onLoaded: clickToPlayImage.visible = true
-
-                Image {
-                    id: clickToPlayImage
-                    visible: false
-
-                    anchors.centerIn: parent
-                    source: "image://theme/icon-l-common-video-playback"
-
-                    opacity: 0.48
-                }
-
-                SequentialAnimation {
-                    id: openingVideoAnimation
-
-                    running: false
-                    loops: Animation.Infinite
-
-                    NumberAnimation {
-                        target: clickToPlayImage;
-                        property: "opacity";
-                        duration: 600;
-                        easing.type: Easing.InOutQuad
-                        from: 0.48
-                        to: 0
-                    }
-
-                    NumberAnimation {
-                        target: clickToPlayImage;
-                        property: "opacity";
-                        duration: 600;
-                        easing.type: Easing.InOutQuad
-                        from: 0
-                        to: 0.48
-                    }
-                }
-
-
-                MouseArea {
-                    anchors.fill: parent
-                    onClicked: {
-                        openingVideoAnimation.start();
-
-                        if (!Qt.openUrlExternally(videoData.url))
-                            Console.log("openexternally failed");
-                    }
-                }
-            }
+            height: detailsViewArea.height
 
             Item {
                 id: detailsViewArea
 
-                anchors.top: thumbnail.bottom
+                anchors.top: parent.top
                 anchors.left: parent.left
                 anchors.right: parent.right
                 anchors.leftMargin: 10
