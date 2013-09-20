@@ -84,8 +84,13 @@ Page {
     TextField {
         id: searchTextField
 
+        z: 2
+
         text: ""
         placeholderText: "Search"
+        inputMethodHints: Qt.ImhNoPredictiveText;
+
+        property bool isSearching: false
 
         anchors.left: parent.left
         anchors.right: parent.right
@@ -98,6 +103,46 @@ Page {
         validator: RegExpValidator {
             regExp: /.+/i
         }
+
+//        onTextChanged: {
+//            if (!isSearching)
+//                searchSuggestions();
+//        }
+
+//        function searchSuggestions() {
+//            var doc = new XMLHttpRequest();
+//            doc.onreadystatechange = function() {
+//                progress(doc.readyState)
+//                if (doc.readyState == XMLHttpRequest.DONE) {
+//                    if (doc.status == 200) {
+//                        var result = JSON.parse(doc.responseText);
+
+//                        if (result[1].length != 0) {
+//                            completer.model.clear();
+
+//                            for (var index in result[1])
+//                                completer.model.append({"suggestion": result[1][index][0]});
+
+//                            completer.visible = true;
+//                        }
+//                    } else {
+//                        // TODO: ERROR HANDLE ?
+//                        if (doc.status == 0)
+//                            console.log("No internet connection");
+//                        else
+//                            console.log("Http code: " + doc.status);
+//                    }
+//                }
+//                console.log("Ready State [Suggestion]: " + doc.readyState);
+//            }
+
+//            var url = "http://suggestqueries.google.com/complete/search?hl=en&client=youtube&hjson=t&ds=yt&q="
+//                    + searchTextField.text
+//                    + "&cp=3";
+
+//            doc.open("GET", url);
+//            doc.send();
+//        }
 
         Image {
             id: searchImage
@@ -122,6 +167,8 @@ Page {
 
             backToSearchResultsButton.enabled = false;
 
+            isSearching = true;
+
             var doc = new XMLHttpRequest();
             doc.onreadystatechange = function() {
                 progress(doc.readyState)
@@ -134,6 +181,7 @@ Page {
                         }
 
                         searchPage.searchResults = resultList;
+                        isSearching = false;
                         finished();
                     } else {
                         if (doc.status == 0)
@@ -141,6 +189,7 @@ Page {
                         else
                             errorstring = "Http code: " + doc.status;
 
+                        isSearching = false;
                         error();
                     }
                 }
@@ -158,6 +207,8 @@ Page {
 
     Label {
         id: statusText
+
+        z: 1
 
         anchors.top: searchTextField.bottom
         anchors.topMargin: 100
@@ -208,8 +259,12 @@ Page {
         var description = ytData.media$group.media$description.$t;
 
         var rating = -1.0;
-        if (ytData.hasOwnProperty("gd$rating"))
+        var ratingMax = 0;
+        if (ytData.hasOwnProperty("gd$rating")) {
             rating = ytData.gd$rating.average;
+            ratingMax = ytData.gd$rating.max;
+        }
+        //console.log(rating + "/" + ratingMax);
 
         var likeCount = -1;
         var dislikeCount = -1;
@@ -230,6 +285,7 @@ Page {
             "viewCount": viewCount,
             "description": description,
             "rating": rating,
+            "ratingMax": ratingMax,
             "likeCount": likeCount,
             "dislikeCount": dislikeCount,
             "ytUrl": ytUrl

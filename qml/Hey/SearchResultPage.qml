@@ -36,10 +36,15 @@ Page {
 
     property variant currentVideoData: ({})
 
+    ScrollDecorator {
+        flickableItem: resultListView
+    }
+
     onResultsChanged: {
         if (results.length == 0) {
             errorText.visible = true;
             resultListView.visible = false;
+            header.title = "Search Results";
         } else {
             errorText.visible = false;
             resultListView.visible = true;
@@ -108,12 +113,15 @@ Page {
                 "description": description,
                 "viewCount": viewCount,
                 "rating": rating,
+                "ratingMax": ratingMax,
                 "likeCount": likeCount,
                 "dislikeCount": dislikeCount,
                 "ytUrl": ytUrl
             };
 
             Component.onCompleted: {
+                ratingStarsRect.rating = rating;
+                ratingStarsRect.ratingMax = ratingMax;
                 videoDetailsDelegate.visible = true;
                 loadMoreButton.visible = false;
 //                videoDetailsDelegate.visible = (index != results.length - 1);
@@ -157,6 +165,7 @@ Page {
                         }
                     }
                 }
+
                 Label {
                     id: titleText
                     x: thumbnail.width + 10
@@ -164,6 +173,7 @@ Page {
                     text: title
                     font.pointSize: 22
                 }
+
                 Label {
                     id: authorText
                     anchors.top: titleText.bottom
@@ -172,6 +182,20 @@ Page {
                     font.pixelSize: 16
                     font.italic: true
                     color: "#464646"
+                }
+
+                RatingStarsRect {
+                    id: ratingStarsRect
+
+                    anchors.left: thumbnail.right
+                    anchors.leftMargin: 10
+                    anchors.top: authorText.bottom
+                    anchors.topMargin: 5
+                    height: 16
+                    width: 105
+
+                    rating: rating
+                    ratingMax: ratingMax
                 }
 
                 MouseArea {
@@ -195,9 +219,6 @@ Page {
         }
         model: ListModel {
             id: listModel
-        }
-        highlight: Rectangle {
-            color: "lightgray"
         }
     }
 }

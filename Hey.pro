@@ -48,3 +48,6 @@ OTHER_FILES += \
 
 HEADERS += \
     windowactions.h
+
+RESOURCES += \
+    resources.qrc
