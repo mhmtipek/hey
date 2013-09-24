@@ -48,6 +48,7 @@ Page {
 
                 onClicked: {
                     Qt.openUrlExternally(videoData.ytUrl);
+                    header.showNotification("Opening in browser ...", 0, "image://theme/icon-m-toolbar-refresh-selected");
                 }
             }
 
@@ -57,6 +58,7 @@ Page {
 
                 onClicked: {
                     clipboardCopyHelperTextInput.copyToSystemClipboard(videoData.ytUrl);
+                    header.showNotification("Link copied", 1000, "image://theme/icon-m-toolbar-done-white-selected");
                 }
             }
         }
@@ -286,6 +288,7 @@ Page {
             if (!hasFocus) {
                 openingVideoAnimation.stop();
                 clickToPlayImage.opacity = 0.48;
+                header.hideNotification();
             }
         }
     }

@@ -27,13 +27,11 @@ Rectangle {
 
         if (value >= index / 5.0)
             return "qrc:/star1.png";
-        else if (value > index / 5.0 - 1)
+        else if (value > (index - 1) / 5.0)
             return "qrc:/star2.png";
         else
             return "qrc:/star3.png";
     }
-
-    //Component.onCompleted: console.log(rating + "/" + ratingMax);
 
     Image {
         id: star1

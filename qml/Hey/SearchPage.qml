@@ -17,6 +17,7 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>
 
 import QtQuick 1.1
 import com.nokia.meego 1.0
+import "utils.js" as Utils
 
 Page {
     id: searchPage
@@ -56,10 +57,11 @@ Page {
     signal navigateToResultPageRequested
 
     onStarted: {
-        statusText.text = "Searching ...";
+        searchingAnimation.start();
     }
 
     onFinished: {
+        searchingAnimation.stop();
         statusText.text = "Finished.";
         backToSearchResultsButton.enabled = true;
     }
@@ -167,9 +169,13 @@ Page {
 
             backToSearchResultsButton.enabled = false;
 
+            if (isSearching)
+                Utils.Globals.httpRequest.abort();
+
             isSearching = true;
 
             var doc = new XMLHttpRequest();
+            Utils.Globals.httpRequest = doc;
             doc.onreadystatechange = function() {
                 progress(doc.readyState)
                 if (doc.readyState == XMLHttpRequest.DONE) {
@@ -185,7 +191,7 @@ Page {
                         finished();
                     } else {
                         if (doc.status == 0)
-                            errorstring = "No internet connection";
+                            errorstring = "Aborted";
                         else
                             errorstring = "Http code: " + doc.status;
 
@@ -224,11 +230,20 @@ Page {
         verticalAlignment: Text.AlignVCenter
 
         text: "Enter search input"
+
+        SequentialAnimation on text {
+            id: searchingAnimation
+
+            loops: Animation.Infinite
+            running: false
+
+            PropertyAnimation { to: "Searching<br>."; duration: 1000 }
+            PropertyAnimation { to: "Searching<br>.."; duration: 1000 }
+            PropertyAnimation { to: "Searching<br>..."; duration: 1000 }
+        }
     }
 
     function createVideoData(ytData) {
-        //TODO: Look for video properties if exist
-
         var id = ytData.yt$videoid;
         var title = ytData.title.$t;
         var author = ytData.author[0].name.$t;
@@ -264,7 +279,6 @@ Page {
             rating = ytData.gd$rating.average;
             ratingMax = ytData.gd$rating.max;
         }
-        //console.log(rating + "/" + ratingMax);
 
         var likeCount = -1;
         var dislikeCount = -1;
